@@ -1,29 +1,81 @@
 <!DOCTYPE html>
-<html ng-app>
+<html ng-app='bitcoinCalculator' ng-controller='bitcoinController'>
 <head>
+  <title>BitCoin Calculator</title>
   <meta charset="UTF-8">
   <meta name = 'viewport' content='width=device-width, initial-scale=1.0'>
   <link href="http://netdna.bootstrapcdn.com/bootswatch/3.1.1/yeti/bootstrap.min.css" rel="stylesheet" media="screen">
   <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
   <script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
   <script src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.10/angular.min.js"></script>
+  <style>
+    .number {font-weight: bold;}
+  </style>
 
-
-  <title>BitCoin Calculator</title>
+  <script type = 'text/javascript'>
+    var bitcoinCalculator = angular.module('bitcoinCalculator', []);
+      bitcoinCalculator.controller('bitcoinController', function ($scope, $http){
+          $http.get('http://bitpay.com/api/rates')
+          .success(function(data){
+            $scope.rates = data;
+            for (var i = 0; i < data.length; i++) {
+              if (data[i].code === 'USD'){
+                $scope.currRate = data[i].rate;
+              }
+            }
+            $scope.initalAmt = 5000;
+            $scope.newAmt = function(price){return price/$scope.currRate*  $scope.initalAmt;};
+            $scope.profit = function(price){return price/$scope.currRate*$scope.initalAmt - $scope.initalAmt;};
+          });
+      });
+    </script>
 </head>
 
 <body>
+    <div class="jumbotron">
 
-  <h1>Bitcoin Investment<br>Calulator</h1>
+      <div class="row">
 
-  <h3>How many Bitcoins do you have?</h3>
+        <div class="col-sm-12">
+          <h1>Bitcoin Investment<br>Calculator</h1>
+          <br><br>
+          <form role="form">
+            <label for="starting-investment">Initial Investment (USD)</label>
+            <input type="number" class="form-control">
+          </form>
+        </div>
 
-  <input type = 'number' ng-model='somenumber' placeholder = '20'>
+      </div>
 
-  <br><br>
+      <div class="row">
+        <div class="col-sm-7">
+          <br><br>
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>Price of 1 BTC</th>
+                <th>Starting Investment</th>
+                <th>Profit</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>5000</td>
+                <td>{{ newAmt(5000) }}</td>
+                <td>{{ profit(5000) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
-  <h4>You have <span class = 'number'>{{ somenumber }}</span> Bitcoins - nicely done!</h4>
+        <div class="col-sm-5">
+          <img src="./btc.png" width="200">
+        </div>
+      </div>
 
-</body>
+      <p>Current Price (USD): ${{currRate}}</p>
 
+    </div>
+
+  </body>
 </html>
