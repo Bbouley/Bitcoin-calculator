@@ -41,7 +41,7 @@
           <br><br>
           <form role="form">
             <label for="starting-investment">Initial Investment (USD)</label>
-            <input type="number" class="form-control">
+            <input type="number" ng-model="initalAmt" class="form-control" placeholder="{{initalAmt}}">
           </form>
         </div>
 
@@ -93,7 +93,7 @@
         </div>
       </div>
 
-      <p>Current Price (USD): ${{currRate | currency}}</p>
+      <p>Current Price (USD): {{currRate | currency}}</p>
 
     </div>
 
